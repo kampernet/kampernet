@@ -1,0 +1,21 @@
+{
+  "name": "kampernet/kampernet",
+  "description": "Package to generate code in the Kampernet style within a Laravel project.  The Kampernet style uses DDD and REST as core tenets.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Joel Klaverkamp",
+      "email": "kampernet@gmail.com"
+    }
+  ],
+  "require": {
+    "packaged/helpers": "^2.4",
+    "symfony/yaml": "^4.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kampernet\\": "src/Kampernet"
+    }
+  }
+}
