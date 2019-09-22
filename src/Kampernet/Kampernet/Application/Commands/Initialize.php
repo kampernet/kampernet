@@ -4,21 +4,21 @@ namespace Kampernet\Kampernet\Application\Commands;
 
 use Illuminate\Console\Command;
 
-class Generate extends Command {
+class Initialize extends Command {
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'kampernet:generate {root=src}';
+    protected $signature = 'kampernet:init';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate classes from /kampernet.yml file';
+    protected $description = 'Initialize a new Kampernet style Laravel app';
 
     /**
      * Execute the console command.
@@ -27,6 +27,6 @@ class Generate extends Command {
      */
     public function handle() {
 
-        $this->info("here we will generate and sync.");
+        $this->info("here we will initialize the app.");
     }
 }
