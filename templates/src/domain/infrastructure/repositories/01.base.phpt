@@ -7,28 +7,35 @@ namespace %namespace%\Domain\Infrastructure\Repositories;
  */
 interface BaseRepositoryInterface {
 
-	/**
-	 * @param int $id
-	 * @return mixed
-	 */
-	public function find($id);
+    /**
+     * @param $id
+     * @param bool $eager
+     * @param bool $includeDeleted
+     * @return mixed
+     */
+    public function find($id, $eager = false, $includeDeleted = false);
 
-	/**
-	 * @param array $params
-	 * @return mixed
-	 */
-	public function match(array $params = []);
+    /**
+     * @param array $params
+     * @param bool $first
+     * @param int $page
+     * @param int $numPerPage
+     * @param bool $orderBy
+     * @param bool $deleted
+     * @return mixed
+     */
+    public function filter(array $params = [], $first = false, $page = 1, $numPerPage = 100, $orderBy = false, $deleted = false);
 
-	/**
-	 * @param mixed $object
-	 * @return mixed
-	 */
-	public function save($object);
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function delete($id);
 
-	/**
-	 * @param int $id
-	 * @return mixed
-	 */
-	public function delete($id);
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function restore($id);
 
 }

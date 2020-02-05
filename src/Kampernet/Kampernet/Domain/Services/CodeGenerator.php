@@ -49,19 +49,20 @@ class CodeGenerator {
 
     /**
      * build and write the domain model class files from the application config
+     *
+     * @throws \Exception
      */
     public function writeBoilerPlate() {
 
         foreach ($this->app['application']['model'] as $name => $model) {
             if (!Strings::startsWith($name, '__')) {
                 $parsed = $this->parseModel($name, $model);
-                $this->writeModelFile($parsed);
-                $this->writeRepositoryInterfaceFile($parsed['className']);
-                $this->writeRepositoryFile($parsed['className']);
-                $this->writeValidationFile($parsed);
-                $this->writeCommandFiles($parsed);
-                $this->writeActionFiles($parsed);
-                $this->writeControllerFile($parsed);
+//                $this->writeModelFile($parsed);
+//                $this->writeRepositoryInterfaceFile($parsed['className']);
+//                $this->writeRepositoryFile($parsed['className']);
+//                $this->writeValidationFile($parsed);
+//                $this->writeControllerFile($parsed);
+                print_r($parsed);
             }
         }
     }
@@ -193,7 +194,7 @@ class CodeGenerator {
 
         $content .= file_get_contents($templates[11]); // close class
 
-        file_put_contents($this->root . '/app/src/Domain/Models/' . $className . '.php', $content);
+        file_put_contents($this->root . '/app/src/Domain/Model/' . $className . '.php', $content);
     }
 
     private function writeRepositoryInterfaceFile($className) {
@@ -450,7 +451,7 @@ class CodeGenerator {
 
         $templatesDir = $this->root . '/templates/app/http/controllers/api/v1';
 
-        $template = $templatesDir . '/controller.1.phpt';
+        $template = $templatesDir . '/controllers.1.phpt';
         $content = str_replace(
             '%namespace%',
             $this->namespace,
@@ -465,7 +466,7 @@ class CodeGenerator {
             )
         );
 
-        $template = $templatesDir . '/controller.2.phpt';
+        $template = $templatesDir . '/controllers.2.phpt';
         foreach ($parsed['properties'] as $property) {
             if (!$property['isObject']) {
                 $content .= str_replace(
@@ -482,10 +483,10 @@ class CodeGenerator {
             }
         }
 
-        $template = $templatesDir . '/controller.3.phpt';
+        $template = $templatesDir . '/controllers.3.phpt';
         $content .= file_get_contents($template);
 
-        $template = $templatesDir . '/controller.4.phpt';
+        $template = $templatesDir . '/controllers.4.phpt';
         foreach ($parsed['properties'] as $property) {
             if (!$property['isObject']) {
                 $content .= str_replace(
@@ -502,7 +503,7 @@ class CodeGenerator {
             }
         }
 
-        $template = $templatesDir . '/controller.5.phpt';
+        $template = $templatesDir . '/controllers.5.phpt';
         $content .= file_get_contents($template);
 
         file_put_contents($this->root . '/app/app/Http/Controllers/Api/V1/' . $parsed['className'] . 'Controller.php', $content);
@@ -511,25 +512,21 @@ class CodeGenerator {
     private function makeDirectories() {
 
         $dirs = [
-            $this->root . '/app',
-            $this->root . '/app/src',
-            $this->root . '/app/src/Domain',
-            $this->root . '/app/src/Domain/Infrastructure',
-            $this->root . '/app/src/Domain/Infrastructure/Repositories',
-            $this->root . '/app/src/Domain/Models',
-            $this->root . '/app/src/Domain/Services',
-            $this->root . '/app/src/Infrastructure',
-            $this->root . '/app/src/Infrastructure/Repositories',
-            $this->root . '/app/src/Infrastructure/Repositories/Doctrine',
-            $this->root . '/app/src/Application',
-            $this->root . '/app/src/Application/Validation',
-            $this->root . '/app/src/Application/Actions',
-            $this->root . '/app/src/Application/Actions/Commands',
-            $this->root . '/app/app',
-            $this->root . '/app/app/Http',
-            $this->root . '/app/app/Http/Controllers',
-            $this->root . '/app/app/Http/Controllers/Api',
-            $this->root . '/app/app/Http/Controllers/Api/V1',
+            $this->root . '/src',
+            $this->root . '/src/Domain',
+            $this->root . '/src/Domain/Infrastructure',
+            $this->root . '/src/Domain/Infrastructure/Repositories',
+            $this->root . '/src/Domain/Model',
+            $this->root . '/src/Domain/Services',
+            $this->root . '/src/Infrastructure',
+            $this->root . '/src/Infrastructure/Repositories',
+            $this->root . '/src/Infrastructure/Repositories/MySql',
+            $this->root . '/src/Application',
+            $this->root . '/src/Application/Auth',
+            $this->root . '/src/Application/Validation',
+            $this->root . '/src/Application/Http',
+            $this->root . '/src/Application/Http/Controllers',
+            $this->root . '/src/Application/Http/Controllers/Api',
         ];
 
         foreach ($dirs as $dir) {
@@ -539,71 +536,26 @@ class CodeGenerator {
 
     private function makeBases() {
 
-        /*
-         * base repository interface
-         */
-        $templatesDir = $this->root . '/templates/src/domain/infrastructure/repositories';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/01.base.phpt')
-        );
-        file_put_contents($this->root . '/app/src/Domain/Infrastructure/Repositories/BaseRepositoryInterface.php', $content);
+        $bases = [
+            ['/templates/src/domain/infrastructure/repositories', '/01.base.phpt', '/app/src/Domain/Infrastructure/Repositories/BaseRepositoryInterface.php'],
+            ['/templates/src/domain/models', '/13.status.phpt', '/app/src/Domain/Model/Status.php'],
+            ['/templates/src/infrastructure/repositories/mysql', '/01.base.phpt', '/app/src/Infrastructure/Repositories/MySql/BaseRepository.php'],
+            ['/templates/src/application/auth', '/login.proxy.phpt', '/app/src/Application/Auth/LoginProxy.php'],
+            ['/templates/src/application/auth', '/inactive.user.phpt', '/app/src/Application/Auth/InactiveUserException.php'],
+            ['/templates/src/application/auth', '/invalid.credentials.phpt', '/app/src/Application/Auth/InvalidCredentialsException.php'],
+            ['/templates/src/application/http', '/api.response.phpt', '/app/src/Application/Http/ApiResponse.php'],
+            ['/templates/src/application/http/controllers', '/base.controller.phpt', '/app/src/Application/Http/Controllers/Controller.php'],
+        ];
 
-        /*
-         * status enum
-         */
-        $templatesDir = $this->root . '/templates/src/domain/models';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/13.status.phpt')
-        );
-        file_put_contents($this->root . '/app/src/Domain/Models/Status.php', $content);
-
-        /*
-         * base repository
-         */
-        $templatesDir = $this->root . '/templates/src/infrastructure/repositories/doctrine';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/01.base.phpt')
-        );
-        file_put_contents($this->root . '/app/src/Infrastructure/Repositories/Doctrine/BaseRepository.php', $content);
-
-        /*
-         * application request
-         */
-        $templatesDir = $this->root . '/templates/src/application';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/request.phpt')
-        );
-        file_put_contents($this->root . '/app/src/Application/Request.php', $content);
-
-        /*
-         * application response
-         */
-        $templatesDir = $this->root . '/templates/src/application';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/response.phpt')
-        );
-        file_put_contents($this->root . '/app/src/Application/Response.php', $content);
-
-        /*
-         * base controller
-         */
-        $templatesDir = $this->root . '/templates/app/http/controllers';
-        $content = str_replace(
-            '%namespace%',
-            $this->namespace,
-            file_get_contents($templatesDir . '/controller.phpt')
-        );
-        file_put_contents($this->root . '/app/app/Http/Controllers/Controller.php', $content);
+        foreach($bases as $base) {
+            $templatesDir = $this->root . $base[0];
+            $content = str_replace(
+                '%namespace%',
+                $this->namespace,
+                file_get_contents($templatesDir . $base[1])
+            );
+            file_put_contents($this->root . $base[2], $content);
+        }
     }
 
     /**

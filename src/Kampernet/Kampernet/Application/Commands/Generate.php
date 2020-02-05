@@ -3,6 +3,8 @@
 namespace Kampernet\Kampernet\Application\Commands;
 
 use Illuminate\Console\Command;
+use Kampernet\Kampernet\Domain\Services\CodeGenerator;
+use Symfony\Component\Yaml\Yaml;
 
 class Generate extends Command {
 
@@ -27,6 +29,12 @@ class Generate extends Command {
      */
     public function handle() {
 
-        $this->info("here we will generate and sync.");
+        $generator = new CodeGenerator(Yaml::parseFile(base_path('kampernet.yml')), base_path());
+        try {
+            $generator->writeBoilerPlate();
+            $this->info("Successfully wrote boilerplate.");
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 }

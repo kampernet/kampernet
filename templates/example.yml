@@ -1,80 +1,30 @@
 application:
   model:
     __namespace: kampernet.dont_forget_about
-    click:
-      __plural: clicks
-      pushPin:
-        type: pushPin
-      user:
-        type: user
-      created:
-        type: timestamp
-    noun:
-      __plural: nouns
-      nounName:
+    post:
+      __plural: posts
+      content:
         type: string
-      pushPins:
-        type: pushPin
-        collection: true
-      reviews:
-        type: review
-        collection: true
-      created:
-        type: timestamp
-    pushPin:
-      __plural: pushPins
-      noun:
-        type: noun
-      verb:
-        type: verb
       user:
         type: user
-      clicks:
-        type: click
-        collection: true
-      created:
-        type: timestamp
-      done:
-        type: timestamp
-    review:
-      __plural: reviews
-      user:
-        type: user
-      noun:
-        type: noun
-      review:
+      category:
+        type: category
+    category:
+      __plural: categories
+      __timestamps: false
+      name:
         type: string
-      rating:
-        type: integer
-      created:
-        type: timestamp
+      posts:
+        type: post
+        collection: true
     user:
       __plural: users
-      userName:
+      username:
         type: string
       email:
         type: string
       password:
         type: string
-      reviews:
-        type: review
+      posts:
+        type: post
         collection: true
-      pushPins:
-        type: pushPin
-        collection: true
-      clicks:
-        type: click
-        collection: true
-    verb:
-      __plural: verbs
-      verbName:
-        type: string
-      pastTense:
-        type: string
-      pushPins:
-        type: pushPin
-        collection: true
-      searchAlias:
-        type: string
-      created:
-        type: timestamp
