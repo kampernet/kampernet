@@ -13,7 +13,7 @@ class Generate extends Command {
      *
      * @var string
      */
-    protected $signature = 'kampernet:generate {root=src}';
+    protected $signature = 'kampernet:generate';
 
     /**
      * The console command description.
