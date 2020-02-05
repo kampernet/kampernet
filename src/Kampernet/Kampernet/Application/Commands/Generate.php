@@ -29,7 +29,9 @@ class Generate extends Command {
      */
     public function handle() {
 
-        $generator = new CodeGenerator(Yaml::parseFile(base_path('kampernet.yml')), base_path());
+        $path = realpath(base_path());
+
+        $generator = new CodeGenerator(Yaml::parseFile("$path/kampernet.yml"), $path);
         try {
             $generator->writeBoilerPlate();
             $this->info("Successfully wrote boilerplate.");
