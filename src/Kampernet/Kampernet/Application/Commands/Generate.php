@@ -20,7 +20,7 @@ class Generate extends Command {
      *
      * @var string
      */
-    protected $description = 'Generate classes from /kampernet.yml file';
+    protected $description = 'Generate classes from kampernet.yml file';
 
     /**
      * Execute the console command.
