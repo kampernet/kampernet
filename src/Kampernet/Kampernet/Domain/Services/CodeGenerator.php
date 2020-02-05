@@ -516,10 +516,12 @@ class CodeGenerator {
             $this->root . "/src/$namespace",
             $this->root . "/src/$namespace/Domain/Infrastructure/Repositories",
             $this->root . "/src/$namespace/Domain/Model",
+            $this->root . "/src/$namespace/Domain/Validation",
             $this->root . "/src/$namespace/Domain/Services",
             $this->root . "/src/$namespace/Infrastructure/Repositories/MySql",
-            $this->root . "/src/$namespace/Application/Auth",
-            $this->root . "/src/$namespace/Application/Validation",
+            $this->root . "/src/$namespace/Application/Validation/Rules",
+            $this->root . "/src/$namespace/Application/Policies",
+            $this->root . "/src/$namespace/Application/Providers",
             $this->root . "/src/$namespace/Application/Http/Controllers/Api",
         ];
 
@@ -537,9 +539,6 @@ class CodeGenerator {
             ['/templates/src/domain/infrastructure/repositories', '/01.base.phpt', "/src/$namespace/Domain/Infrastructure/Repositories/BaseRepositoryInterface.php"],
             ['/templates/src/domain/models', '/13.status.phpt', "/src/$namespace/Domain/Model/Status.php"],
             ['/templates/src/infrastructure/repositories/mysql', '/01.base.phpt', "/src/$namespace/Infrastructure/Repositories/MySql/BaseRepository.php"],
-            ['/templates/src/application/auth', '/login.proxy.phpt', "/src/$namespace/Application/Auth/LoginProxy.php"],
-            ['/templates/src/application/auth', '/inactive.user.phpt', "/src/$namespace/Application/Auth/InactiveUserException.php"],
-            ['/templates/src/application/auth', '/invalid.credentials.phpt', "/src/$namespace/Application/Auth/InvalidCredentialsException.php"],
             ['/templates/src/application/http', '/api.response.phpt', "/src/$namespace/Application/Http/ApiResponse.php"],
             ['/templates/src/application/http/controllers', '/base.controller.phpt', "/src/$namespace/Application/Http/Controllers/Controller.php"],
         ];

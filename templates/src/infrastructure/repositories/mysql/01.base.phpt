@@ -90,6 +90,7 @@ abstract class BaseRepository implements BaseRepositoryInterface {
 
     /**
      * @param $id
+     * @throws \Exception
      */
     public function delete($id) {
 
@@ -107,6 +108,7 @@ abstract class BaseRepository implements BaseRepositoryInterface {
 
     /**
      * @param $id
+     * @throws \Exception
      */
     public function restore($id) {
 

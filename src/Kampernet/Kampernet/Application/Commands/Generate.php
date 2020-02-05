@@ -30,10 +30,13 @@ class Generate extends Command {
     public function handle() {
 
         $path = realpath(base_path());
-
         $generator = new CodeGenerator(Yaml::parseFile("$path/kampernet.yml"), $path);
         try {
             $generator->writeBoilerPlate();
+            // add this to the composer.json
+            //  "psr-0": {
+            //      "Kampernet\\Wrench": "src"
+            //  },
             $this->info("Successfully wrote boilerplate.");
         } catch (\Exception $e) {
             $this->error($e->getMessage());

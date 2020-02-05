@@ -1,6 +1,6 @@
 application:
   model:
-    __namespace: kampernet.dont_forget_about
+    __namespace: vendor_name.project_name
     post:
       __plural: posts
       content:
