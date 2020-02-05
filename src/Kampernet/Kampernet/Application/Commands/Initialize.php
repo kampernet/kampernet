@@ -34,7 +34,7 @@ class Initialize extends Command {
         shell_exec("composer require barryvdh/laravel-ide-helper --dev");
         shell_exec("./artisan migrate");
         shell_exec("./artisan passport:keys");
-        shell_exec("./artisan ui vue --auth");
+        shell_exec("./artisan ui vue --auth --no-interaction");
         $this->info("All done, now modify the kampernet.yml file to suit your app and run artisan kampernet:generate");
     }
 }
