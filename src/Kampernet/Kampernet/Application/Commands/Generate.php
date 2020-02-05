@@ -29,15 +29,12 @@ class Generate extends Command {
      */
     public function handle() {
 
-        $path = realpath(base_path());
-        $generator = new CodeGenerator(Yaml::parseFile("$path/kampernet.yml"), $path);
+        $root = realpath(base_path());
+        $app = Yaml::parseFile("$root/kampernet.yml");
+        $generator = new CodeGenerator($app, $root);
         try {
             $generator->writeBoilerPlate();
-            // add this to the composer.json
-            //  "psr-0": {
-            //      "Kampernet\\Wrench": "src"
-            //  },
-            $this->info("Successfully wrote boilerplate.");
+            $this->info("Successfully wrote boilerplate. Next add \"VendorName\\\\ProjectName\\\\\": \"src/VendorName/ProjectName\" to your composer.json autoload psr-4 section.");
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
