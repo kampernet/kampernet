@@ -511,44 +511,41 @@ class CodeGenerator {
 
     private function makeDirectories() {
 
+        $namespace = str_replace("\\", "/", $this->namespace);
         $dirs = [
-            $this->root . '/src',
-            $this->root . '/src/Domain',
-            $this->root . '/src/Domain/Infrastructure',
-            $this->root . '/src/Domain/Infrastructure/Repositories',
-            $this->root . '/src/Domain/Model',
-            $this->root . '/src/Domain/Services',
-            $this->root . '/src/Infrastructure',
-            $this->root . '/src/Infrastructure/Repositories',
-            $this->root . '/src/Infrastructure/Repositories/MySql',
-            $this->root . '/src/Application',
-            $this->root . '/src/Application/Auth',
-            $this->root . '/src/Application/Validation',
-            $this->root . '/src/Application/Http',
-            $this->root . '/src/Application/Http/Controllers',
-            $this->root . '/src/Application/Http/Controllers/Api',
+            $this->root . "/src/$namespace",
+            $this->root . "/src/$namespace/Domain/Infrastructure/Repositories",
+            $this->root . "/src/$namespace/Domain/Model",
+            $this->root . "/src/$namespace/Domain/Services",
+            $this->root . "/src/$namespace/Infrastructure/Repositories/MySql",
+            $this->root . "/src/$namespace/Application/Auth",
+            $this->root . "/src/$namespace/Application/Validation",
+            $this->root . "/src/$namespace/Application/Http/Controllers/Api",
         ];
 
         foreach ($dirs as $dir) {
-            if (!is_dir($dir)) mkdir($dir);
+            if (!is_dir($dir)) mkdir($dir, "0777", true);
         }
     }
 
     private function makeBases() {
 
+        $root = $this->root . "/vendor/kampernet/kampernet";
+        $namespace = str_replace("\\", "/", $this->namespace);
+
         $bases = [
-            ['/templates/src/domain/infrastructure/repositories', '/01.base.phpt', '/app/src/Domain/Infrastructure/Repositories/BaseRepositoryInterface.php'],
-            ['/templates/src/domain/models', '/13.status.phpt', '/app/src/Domain/Model/Status.php'],
-            ['/templates/src/infrastructure/repositories/mysql', '/01.base.phpt', '/app/src/Infrastructure/Repositories/MySql/BaseRepository.php'],
-            ['/templates/src/application/auth', '/login.proxy.phpt', '/app/src/Application/Auth/LoginProxy.php'],
-            ['/templates/src/application/auth', '/inactive.user.phpt', '/app/src/Application/Auth/InactiveUserException.php'],
-            ['/templates/src/application/auth', '/invalid.credentials.phpt', '/app/src/Application/Auth/InvalidCredentialsException.php'],
-            ['/templates/src/application/http', '/api.response.phpt', '/app/src/Application/Http/ApiResponse.php'],
-            ['/templates/src/application/http/controllers', '/base.controller.phpt', '/app/src/Application/Http/Controllers/Controller.php'],
+            ['/templates/src/domain/infrastructure/repositories', '/01.base.phpt', "/src/$namespace/Domain/Infrastructure/Repositories/BaseRepositoryInterface.php"],
+            ['/templates/src/domain/models', '/13.status.phpt', "/src/$namespace/Domain/Model/Status.php"],
+            ['/templates/src/infrastructure/repositories/mysql', '/01.base.phpt', "/src/$namespace/Infrastructure/Repositories/MySql/BaseRepository.php"],
+            ['/templates/src/application/auth', '/login.proxy.phpt', "/src/$namespace/Application/Auth/LoginProxy.php"],
+            ['/templates/src/application/auth', '/inactive.user.phpt', "/src/$namespace/Application/Auth/InactiveUserException.php"],
+            ['/templates/src/application/auth', '/invalid.credentials.phpt', "/src/$namespace/Application/Auth/InvalidCredentialsException.php"],
+            ['/templates/src/application/http', '/api.response.phpt', "/src/$namespace/Application/Http/ApiResponse.php"],
+            ['/templates/src/application/http/controllers', '/base.controller.phpt', "/src/$namespace/Application/Http/Controllers/Controller.php"],
         ];
 
         foreach($bases as $base) {
-            $templatesDir = $this->root . $base[0];
+            $templatesDir = $root . $base[0];
             $content = str_replace(
                 '%namespace%',
                 $this->namespace,
