@@ -1,13 +1,8 @@
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class %class_name%
  *
- * @package %namespace%\Domain\Models
- * @ORM\Entity
- * @ORM\Table(
- *     name="%table_name%"
- * )
+ * @package %namespace%\Domain\Model
  */
 class %class_name% {
 

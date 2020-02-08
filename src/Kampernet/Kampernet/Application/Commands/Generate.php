@@ -34,7 +34,11 @@ class Generate extends Command {
         $generator = new CodeGenerator($app, $root);
         try {
             $generator->writeBoilerPlate();
-            $this->info("Successfully wrote boilerplate. Next add \"VendorName\\\\ProjectName\\\\\": \"src/VendorName/ProjectName\" to your composer.json autoload psr-4 section.");
+            $namespace = $generator->getNamespace();
+            $namespace = explode("\\", $namespace);
+            $folder = $namespace[0]."/".$namespace[1];
+            $namespace = implode("\\\\", $namespace) . "\\\\";
+            $this->info("Successfully wrote boilerplate. Next add \"$namespace\": \"src/$folder\" to your composer.json autoload psr-4 section.");
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

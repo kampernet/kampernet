@@ -19,7 +19,7 @@ application:
         collection: true
     user:
       __plural: users
-      username:
+      name:
         type: string
       email:
         type: string

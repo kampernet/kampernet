@@ -1,1 +1,1 @@
-		$this->%plural_property_name% = new ArrayCollection();
+		$this->%plural_property_name% = [];

@@ -1,1 +1,1 @@
-namespace %namespace%\Domain\Models;
+namespace %namespace%\Domain\Model;

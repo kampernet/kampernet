@@ -1,10 +1,5 @@
 	/**
-	 * @ORM\OneToMany(
-	 *     targetEntity="\%namespace%\Domain\Models\%property_classname%",
-	 *     mappedBy="%mapped_by%"
-	 * )
-	 *
-	 * @var \%namespace%\Domain\Models\%property_classname%[]
+	 * @var \%namespace%\Domain\Model\%property_classname%[]
 	 */
 	public $%plural_property_name%;
 

@@ -57,14 +57,19 @@ class CodeGenerator {
         foreach ($this->app['application']['model'] as $name => $model) {
             if (!Strings::startsWith($name, '__')) {
                 $parsed = $this->parseModel($name, $model);
-//                $this->writeModelFile($parsed);
-//                $this->writeRepositoryInterfaceFile($parsed['className']);
-//                $this->writeRepositoryFile($parsed['className']);
+                $this->writeModelFile($parsed);
+                $this->writeRepositoryInterfaceFile($parsed['className'], $parsed['camelCaseClassName']);
+                $this->writeRepositoryFile($parsed['className'], $parsed['camelCaseClassName'], $parsed['tableName']);
 //                $this->writeValidationFile($parsed);
 //                $this->writeControllerFile($parsed);
                 print_r($parsed);
             }
         }
+    }
+
+    public function getNamespace() {
+
+        return $this->namespace;
     }
 
     private function writeModelFile($parsed) {
@@ -75,9 +80,10 @@ class CodeGenerator {
         $properties = $parsed['properties'];
         $collections = [];
 
-        $hasCollections = $this->hasCollections($properties);
+        $root = $this->root . "/vendor/kampernet/kampernet";
+        $folder = str_replace("\\", "/", $this->namespace);
 
-        $templatesDir = $this->root . '/templates/src/domain/models';
+        $templatesDir = "$root/templates/src/domain/models";
         $content = "";
 
         $templates = [
@@ -97,7 +103,6 @@ class CodeGenerator {
 
         $content .= file_get_contents($templates[0]); // open php tag
         $content .= str_replace('%namespace%', $namespace, file_get_contents($templates[1])); // namespace declaration
-        $content .= ($hasCollections) ? file_get_contents($templates[2]) : ''; // whether or not to import / use doctrine collections
         $content .= str_replace(
             '%namespace%',
             $namespace,
@@ -180,53 +185,61 @@ class CodeGenerator {
             }
         }
 
-        if ($hasCollections) {
-            $content .= str_replace('%class_name%', $className, file_get_contents($templates[8])); // open constructor
-            foreach ($collections as $collection) {
-                $content .= str_replace(
-                    '%plural_property_name%',
-                    $collection['pluralPropertyName'],
-                    file_get_contents($templates[9]) // init collections inside constructor
-                );
-            }
-            $content .= file_get_contents($templates[10]); // close constructor
-        }
-
         $content .= file_get_contents($templates[11]); // close class
 
-        file_put_contents($this->root . '/app/src/Domain/Model/' . $className . '.php', $content);
+        file_put_contents($this->root . "/src/$folder/Domain/Model/$className.php", $content);
     }
 
-    private function writeRepositoryInterfaceFile($className) {
+    private function writeRepositoryInterfaceFile($className, $camelCaseClassName) {
 
-        $templatesDir = $this->root . '/templates/src/domain/infrastructure/repositories';
+        $root = $this->root . "/vendor/kampernet/kampernet";
+        $folder = str_replace("\\", "/", $this->namespace);
+
+        $templatesDir = "$root/templates/src/domain/infrastructure/repositories";
+
         $content = str_replace(
             '%namespace%',
             $this->namespace,
             str_replace(
                 '%class_name%',
                 $className,
-                file_get_contents($templatesDir . '/02.extension.phpt')
+                str_replace(
+                    '%camel_case_class_name%',
+                    $camelCaseClassName,
+                    file_get_contents($templatesDir . '/02.extension.phpt')
+                )
             )
         );
 
-        file_put_contents($this->root . '/app/src/Domain/Infrastructure/Repositories/' . $className . 'RepositoryInterface.php', $content);
+        file_put_contents($this->root . "/src/$folder/Domain/Infrastructure/Repositories/$className"."RepositoryInterface.php", $content);
     }
 
-    private function writeRepositoryFile($className) {
+    private function writeRepositoryFile($className, $camelCaseClassName, $tableName) {
 
-        $templatesDir = $this->root . '/templates/src/infrastructure/repositories/doctrine';
+        $root = $this->root . "/vendor/kampernet/kampernet";
+        $folder = str_replace("\\", "/", $this->namespace);
+
+        $templatesDir = "$root/templates/src/infrastructure/repositories/mysql";
+
         $content = str_replace(
             '%namespace%',
             $this->namespace,
             str_replace(
                 '%class_name%',
                 $className,
-                file_get_contents($templatesDir . '/02.extension.phpt')
+                str_replace(
+                    '%camel_case_class_name%',
+                    $camelCaseClassName,
+                    str_replace(
+                        '%table_name%',
+                        $tableName,
+                        file_get_contents($templatesDir . '/02.extension.phpt')
+                    )
+                )
             )
         );
 
-        file_put_contents($this->root . '/app/src/Infrastructure/Repositories/Doctrine/' . $className . 'Repository.php', $content);
+        file_put_contents($this->root . "/src/$folder/Infrastructure/Repositories/MySql/$className"."Repository.php", $content);
     }
 
     private function writeValidationFile($parsed) {
