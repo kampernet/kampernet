@@ -59,7 +59,7 @@ class CodeGenerator {
                 $parsed = $this->parseModel($name, $model);
                 $this->writeModelFile($parsed);
                 $this->writeRepositoryInterfaceFile($parsed['className'], $parsed['camelCaseClassName']);
-                $this->writeRepositoryFile($parsed['className'], $parsed['camelCaseClassName'], $parsed['tableName']);
+                $this->writeRepositoryFile($parsed);
 //                $this->writeValidationFile($parsed);
 //                $this->writeControllerFile($parsed);
                 print_r($parsed);
@@ -214,7 +214,14 @@ class CodeGenerator {
         file_put_contents($this->root . "/src/$folder/Domain/Infrastructure/Repositories/$className"."RepositoryInterface.php", $content);
     }
 
-    private function writeRepositoryFile($className, $camelCaseClassName, $tableName) {
+    private function writeRepositoryFile($parsed) {
+
+        $className = $parsed['className'];
+        $camelCaseClassName = $parsed['camelCaseClassName'];
+        $tableName = $parsed['tableName'];
+        $namespace = $parsed['namespace'];
+        $properties = $parsed['properties'];
+        $objects = $this->hasObjects($properties);
 
         $root = $this->root . "/vendor/kampernet/kampernet";
         $folder = str_replace("\\", "/", $this->namespace);
@@ -230,13 +237,120 @@ class CodeGenerator {
                 str_replace(
                     '%camel_case_class_name%',
                     $camelCaseClassName,
-                    str_replace(
-                        '%table_name%',
-                        $tableName,
-                        file_get_contents($templatesDir . '/02.extension.phpt')
-                    )
+                    file_get_contents("$templatesDir/02.a.open_file.phpt")
                 )
             )
+        );
+
+        if ($objects) {
+            foreach($properties as $property) {
+                if ($property['isObject']) {
+                    $content .= str_replace(
+                        '%namespace%',
+                        $namespace,
+                        str_replace(
+                            '%class_name%',
+                            $property['propertyClassname'],
+                            file_get_contents("$templatesDir/02.b.use_repos.phpt")
+                        )
+                    );
+                }
+            }
+        }
+
+        $content .= str_replace(
+            '%class_name%',
+            $className,
+            str_replace(
+                '%table_name%',
+                $tableName,
+                file_get_contents("$templatesDir/02.c.extend_base.phpt")
+            )
+        );
+
+        if ($objects) {
+            $injections = [];
+            foreach ($properties as $property) {
+                if ($property['isObject']) {
+                    $content .= str_replace(
+                        '%camel_case_class_name%',
+                        $property['objectPropertyCamelcase'],
+                        str_replace(
+                            '%class_name%',
+                            $property['propertyClassname'],
+                            file_get_contents("$templatesDir/02.d.declare_repos.phpt")
+                        )
+                    );
+                    $injections []= str_replace(
+                        '%class_name%',
+                        $property['propertyClassname'],
+                        str_replace(
+                            '%camel_case_class_name%',
+                            $property['objectPropertyCamelcase'],
+                            file_get_contents("$templatesDir/02.e.prepare_injection.phpt")
+                        )
+                    );
+                }
+            }
+
+            $injections = implode(", ", $injections);
+            $content .= str_replace(
+                '%repo_injection%',
+                $injections,
+                str_replace(
+                    '%class_name%',
+                    $className,
+                    file_get_contents("$templatesDir/03.a.open_constructor.phpt")
+                )
+            );
+
+            foreach($properties as $property) {
+                if ($property['isObject']) {
+                    $content .= str_replace(
+                        '%camel_case_class_name%',
+                        $property['objectPropertyCamelcase'],
+                        file_get_contents("$templatesDir/03.b.init_repo_fields.phpt")
+                    );
+                }
+            }
+
+            $content .= file_get_contents("$templatesDir/03.c.close_constructor.phpt");
+        }
+
+        $content .= str_replace(
+            '%class_name%',
+            $className,
+            str_replace(
+                '%camel_case_class_name%',
+                $camelCaseClassName,
+                file_get_contents("$templatesDir/04.save_open_hydrate.phpt")
+            )
+        );
+
+        $content .= str_replace(
+            '%class_name%',
+            $className,
+            str_replace(
+                '%camel_case_class_name%',
+                $camelCaseClassName,
+                file_get_contents("$templatesDir/06.open_update.phpt")
+            )
+        );
+
+        $content .= str_replace(
+            '%class_name%',
+            $className,
+            str_replace(
+                '%camel_case_class_name%',
+                $camelCaseClassName,
+                file_get_contents("$templatesDir/08.open_insert.phpt")
+            )
+        );
+
+        $content .= str_replace(
+            '%camel_case_class_name%',
+            $camelCaseClassName,
+            file_get_contents("$templatesDir/09.close_insert.phpt")
         );
 
         file_put_contents($this->root . "/src/$folder/Infrastructure/Repositories/MySql/$className"."Repository.php", $content);
@@ -699,6 +813,21 @@ class CodeGenerator {
 
         foreach ($properties as $property) {
             if ($property['isCollection']) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $properties
+     * @return bool
+     */
+    private function hasObjects($properties) {
+
+        foreach ($properties as $property) {
+            if ($property['isObject']) {
                 return true;
             }
         }
