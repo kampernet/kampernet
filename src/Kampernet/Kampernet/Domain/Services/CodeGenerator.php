@@ -270,6 +270,7 @@ class CodeGenerator {
 
         if ($objects) {
             $injections = [];
+            $params = [];
             foreach ($properties as $property) {
                 if ($property['isObject']) {
                     $content .= str_replace(
@@ -290,8 +291,29 @@ class CodeGenerator {
                             file_get_contents("$templatesDir/02.e.prepare_injection.phpt")
                         )
                     );
+
+                    $params []= str_replace(
+                        '%class_name%',
+                        $property['propertyClassname'],
+                        str_replace(
+                            '%camel_case_class_name%',
+                            $property['objectPropertyCamelcase'],
+                            file_get_contents("$templatesDir/03.a.b.params.phpt")
+                        )
+                    );
                 }
             }
+
+            $params = implode("\n", $params);
+            $content .= str_replace(
+                '%class_name%',
+                $className,
+                str_replace(
+                    '%injection_params%',
+                    $params,
+                    file_get_contents("$templatesDir/03.a.a.constructor_docblock.phpt")
+                )
+            );
 
             $injections = implode(", ", $injections);
             $content .= str_replace(
