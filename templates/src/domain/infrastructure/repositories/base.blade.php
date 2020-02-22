@@ -1,5 +1,4 @@
-<?php
-namespace %namespace%\Domain\Infrastructure\Repositories;
+namespace {{$namespace}}\Domain\Infrastructure\Repositories;
 
 /**
  * Interface BaseRepositoryInterface

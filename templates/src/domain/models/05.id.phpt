@@ -1,5 +1,0 @@
-	/**
-	 * @var int
-	 */
-	public $id;
-

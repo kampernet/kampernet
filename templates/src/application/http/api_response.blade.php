@@ -1,5 +1,4 @@
-<?php
-namespace %namespace%\Application\Http;
+namespace {{$namespace}}\Application\Http;
 
 use Auth;
 use Illuminate\Contracts\Validation\Validator;
@@ -34,7 +33,6 @@ class ApiResponse {
         $this->user = new \stdClass();
         $this->user->id = Auth::user()->id;
         $this->user->name = Auth::user()->name;
-        $this->user->role = Auth::user()->role;
     }
 
     /**

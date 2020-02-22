@@ -1,13 +1,11 @@
-<?php
-
-namespace Kampernet\Wrench\Application\Http\Controllers;
+namespace {{$namespace}}\Application\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
 use Exception;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
-use %namespace%\Application\Http\ApiResponse;
-use %namespace%\Application\Validation\Rules\NotDeleted;
+use {{$namespace}}\Application\Http\ApiResponse;
+use {{$namespace}}\Application\Validation\Rules\NotDeleted;
 use Lang;
 use Illuminate\Http\Request;
 
