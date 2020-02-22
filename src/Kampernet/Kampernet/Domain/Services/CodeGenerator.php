@@ -104,6 +104,16 @@ class CodeGenerator {
     private function writeRepositoryFile($parsed) {
 
         $className = $parsed['className'];
+        $folder = str_replace("\\", "/", $this->namespace);
+        file_put_contents(
+            $this->root . "/src/$folder/Infrastructure/Repositories/MySql/$className"."Repository.php",
+            "<?php\n" . $this->blade->render("infrastructure.repositories.mysql.extension", $parsed)
+        );
+    }
+
+    private function writeRepositoryFileOld($parsed) {
+
+        $className = $parsed['className'];
         $camelCaseClassName = $parsed['camelCaseClassName'];
         $tableName = $parsed['tableName'];
         $namespace = $parsed['namespace'];
@@ -696,6 +706,9 @@ class CodeGenerator {
         }
 
         $columnName = Strings::stringToUnderScore($propertyName);
+        if ($object) {
+            $columnName .= "_id";
+        }
         $collection = isset($details['collection']) ? true : false;
         $mappedByPropertyName = isset($details['mappedBy']) ? $details['mappedBy'] : $name;
         $inversedByPropertyName = Strings::stringToCamelCase(isset($details['inversedBy']) ? $details['inversedBy'] : $this->app['application']['model'][$name]['__plural']);
